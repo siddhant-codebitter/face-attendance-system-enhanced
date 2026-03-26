@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Face Attendance System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal flex flex-col min-h-screen">
+
+{% if session.username %}
+  <nav class="bg-blue-800 p-4 shadow-md">
+    <div class="container mx-auto flex flex-wrap items-center justify-between">
+      <div class="flex items-center text-white mr-6">
+        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+        <span class="font-semibold text-xl tracking-tight">Smart Attendance</span>
+      </div>
+      <div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
+        <div class="text-sm lg:flex-grow">
+          <a href="{{ url_for('dashboard') }}" class="block mt-4 lg:inline-block lg:mt-0 text-blue-200 hover:text-white mr-4 transition duration-150">Dashboard</a>
+          <a href="{{ url_for('students') }}" class="block mt-4 lg:inline-block lg:mt-0 text-blue-200 hover:text-white mr-4 transition duration-150">Students</a>
+          <a href="{{ url_for('start_session') }}" class="block mt-4 lg:inline-block lg:mt-0 text-blue-200 hover:text-white mr-4 transition duration-150">Start Session</a>
+          <a href="{{ url_for('view_attendance') }}" class="block mt-4 lg:inline-block lg:mt-0 text-blue-200 hover:text-white transition duration-150">Attendance Records</a>
+        </div>
+        <div class="mt-4 lg:mt-0 flex items-center">
+          <span class="text-gray-300 mr-4 text-sm">Logged in as <b class="text-white">{{ session.username }}</b></span>
+          <a href="{{ url_for('logout') }}" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-blue-800 hover:bg-white transition duration-150">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+{% endif %}
+
+<div class="container mx-auto mt-8 px-4 flex-grow">
+  {% block content %}{% endblock %}
+</div>
+
+<footer class="bg-gray-800 text-gray-400 text-center py-4 mt-8">
+  <p class="text-sm">&copy; 2026 Face Recognition Attendance System.</p>
+</footer>
+
+</body>
+</html>

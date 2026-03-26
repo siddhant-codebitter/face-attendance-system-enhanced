@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Attendance Session</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen">
+
+    <div class="text-center mb-6">
+        <h2 class="text-3xl font-bold text-blue-400 tracking-wide">Live Attendance Feed</h2>
+        <p class="text-gray-400 text-sm mt-2">Session ID: <span class="font-mono text-gray-200">{{ session_id }}</span></p>
+        <p class="text-yellow-400 text-sm mt-3 font-semibold bg-gray-800 py-1.5 px-4 rounded-full inline-block shadow-sm">
+            Scanning faces... Only students matching the session's class will be marked present.
+        </p>
+    </div>
+
+    <div class="bg-black border-4 border-gray-700 rounded-lg overflow-hidden shadow-2xl relative">
+        <img src="{{ url_for('video_feed_attendance', session_id=session_id) }}" alt="Webcam Feed" class="w-full max-w-3xl h-auto" onerror="this.onerror=null; this.src=''; this.alt='Camera feed ended or disconnected.'; this.className='text-center p-12 text-gray-500 border border-gray-800';">
+    </div>
+
+    <div class="mt-10">
+        <button onclick="endSessionAndClose()" class="px-8 py-3 bg-red-600 hover:bg-red-700 font-bold text-lg rounded-md shadow-lg transition duration-200 ease-in-out transform hover:-translate-y-1">
+            End Session & Close Window
+        </button>
+    </div>
+
+    <script>
+        function endSessionAndClose() {
+            // Trigger the backend to log the end_time for the session
+            fetch("{{ url_for('end_session', session_id=session_id) }}")
+                .then(response => {
+                    // Redirect the parent window to the view_attendance page to see the results immediately
+                    if (window.opener && !window.opener.closed) {
+                        window.opener.location.href = "{{ url_for('view_attendance') }}";
+                    }
+                    // Close this popup
+                    window.close();
+                })
+                .catch(err => {
+                    console.error("Error ending session:", err);
+                    window.close();
+                });
+        }
+    </script>
+</body>
+</html>

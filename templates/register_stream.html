@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Registration - {{ student.name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen">
+
+    <div class="text-center mb-4">
+        <h2 class="text-2xl font-bold text-blue-400">Registering: {{ student.name }}</h2>
+        <p class="text-gray-400 text-sm mt-1">Roll No: {{ student.roll_no }} | Class: {{ student.class_name }}</p>
+        <p class="text-yellow-400 text-sm mt-2 font-semibold bg-gray-800 py-1 px-3 rounded-full inline-block">
+            Please look directly at the camera until 50 samples are collected.
+        </p>
+    </div>
+
+    <div class="bg-black border-4 border-gray-700 rounded-lg overflow-hidden shadow-2xl">
+        <img src="{{ url_for('video_feed_register', student_id=student.id) }}" alt="Webcam Feed" class="w-full max-w-2xl h-auto" onerror="this.onerror=null; this.src=''; this.alt='Camera feed ended or disconnected.'; this.className='text-center p-10 text-gray-500';">
+    </div>
+
+    <div class="mt-8 flex gap-4">
+        <button onclick="closeAndRefresh()" class="px-6 py-2 bg-green-600 hover:bg-green-700 font-bold rounded shadow transition">
+            Finish & Close Window
+        </button>
+    </div>
+
+    <script>
+        function closeAndRefresh() {
+            // Refresh the parent window (students list) to update the "Registered" badge
+            if (window.opener && !window.opener.closed) {
+                window.opener.location.reload();
+            }
+            // Close this popup
+            window.close();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex flex-col lg:flex-row gap-8">
+    
+    <div class="w-full lg:w-1/3 space-y-6">
+        
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">1. Add New Class</h3>
+            <form method="post" action="{{ url_for('add_class') }}">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Class Name</label>
+                    <input class="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" type="text" name="class_name" placeholder="e.g. TE AI A" required>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-150">
+                    Add Class
+                </button>
+            </form>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">2. Add New Student</h3>
+            <form method="post" action="{{ url_for('students') }}">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Roll No</label>
+                    <input class="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" type="text" name="roll_no" placeholder="e.g. 101" required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Name</label>
+                    <input class="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" type="text" name="name" placeholder="John Doe" required>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Class</label>
+                    <select name="class_name" class="shadow-sm border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white transition" required>
+                        <option value="" disabled selected>Select a class...</option>
+                        {% for c in classes %}
+                            <option value="{{ c.class_name }}">{{ c.class_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-150">
+                    Add Student
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="w-full lg:w-2/3">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-gray-800">Student Directory</h3>
+                <input type="text" id="searchInput" onkeyup="filterStudents()" placeholder="Search by name, roll no, or class..." class="shadow-sm border rounded py-1 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-64">
+            </div>
+            
+            <div class="overflow-x-auto h-[600px] overflow-y-auto">
+                <table class="min-w-full divide-y divide-gray-200" id="studentTable">
+                    <thead class="bg-gray-50 sticky top-0">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Roll No</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Class</th>
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Face Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for s in students %}
+                        <tr class="hover:bg-gray-50 transition duration-150 student-row">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ s.roll_no }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ s.name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ s.class_name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                {% if s.face_registered %}
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                        Registered
+                                    </span>
+                                {% else %}
+                                    <!-- <button onclick="openRegistrationPopup({{ s.id }})" class="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none transition">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                                        Register Face
+                                    </button> -->
+                                    <button data-student-id="{{ s.id }}" onclick="openRegistrationPopup(this.dataset.studentId)" class="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none transition">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                                        Register Face
+                                    </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="px-6 py-8 text-center text-sm text-gray-500 italic">No students found. Add a class and a student to begin.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Search filter logic
+function filterStudents() {
+    let input = document.getElementById('searchInput').value.toLowerCase();
+    let rows = document.querySelectorAll('.student-row');
+    rows.forEach(row => {
+        let text = row.innerText.toLowerCase();
+        row.style.display = text.includes(input) ? '' : 'none';
+    });
+}
+
+// Popup logic for registration
+function openRegistrationPopup(studentId) {
+    const url = `/register_popup/${studentId}`;
+    // Opens a centered 800x650 popup window over the current page
+    window.open(url, 'FaceRegistration', 'width=800,height=650,left=' + (screen.width/2 - 400) + ',top=' + (screen.height/2 - 325));
+}
+</script>
+{% endblock %}
